@@ -1,5 +1,7 @@
 package org.zerock.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,10 +9,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.domain.SampleDTO;
 
@@ -95,5 +99,22 @@ public class SampleController {
 		header.add("Content-Type", "application/json;charset=UTF-8");
 //		안녕하세요 이수호 입니다. 다녀갑니다. 다시오겠습니다. 반갑습니다. 현민형님 안녕하세용. 키보드가 야무진거 같습니다.
 		return new ResponseEntity<String>(message, header, HttpStatus.OK);
+	}
+	
+	//리턴타입 void exUpload.jsp 출력
+	@GetMapping("exUpload")
+	public void exUpload() {
+		log.info("exUpload......");
+	}
+	
+	@PostMapping("exUploadPost")
+	// file : MultipartFile로 파일을 하나를 가져옴.
+	public void exUploadPost(List<MultipartFile> files) {
+		files.forEach(file -> {
+			log.info("--------------");
+			log.info("filename: " + file.getOriginalFilename());
+			log.info("size: " + file.getSize());
+			
+		});
 	}
 }

@@ -22,7 +22,20 @@
 	</beans:bean>
 	
 	<context:component-scan base-package="org.zerock.controller" />
+	<context:component-scan base-package="org.zerock.exception" />
 	
-	
+	<!-- 파일 첨부의 id는 무조건 'multipartResolver' -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+		<!-- 한글이름으로 된 파일을 인코딩해주는 역할  -->
+		<beans:property name="defaultEncoding" value="UTF-8"/>
+		<!-- 1024 * 1024 * 100 => 100MB(전체) -->
+		<beans:property name="maxUploadSize" value="1048575600"/>
+		<!-- 1024 * 1024 * 20 => 20MB(파일 한개당) -->
+		<beans:property name="maxUploadSizePerFile" value="20971520"/>
+		<!-- 업로드된 파일이 임시로 저장될 디렉토리의 경로를 지정 -->
+		<beans:property name="uploadTempDir" value="file:/C:/Users/KOSA/Downloads/temp" />
+		<!-- 업로드된 파일을 메모리에 임시로 보관할 수 있는 최대 크기를 지정 -->
+		<beans:property name="maxInMemorySize" value="10485756" />
+	</beans:bean>
 	
 </beans:beans>
