@@ -5,6 +5,7 @@
 <mapper namespace="org.zerock.mapper.BoardMapper">
 <!-- mybatis는 namespace가 중요!  -->
 
+	<!-- 목록과 데이터 개수 처리 용도 -->
 	<sql id="criteria">
 		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
 			<foreach item='type' collection="typeArr">
@@ -69,27 +70,50 @@
 		where bno =
 		#{bno}
 	</update>
-	<!-- 
+
+<!-- list만의 페이징 처리 용도 -->
+<!-- 	<select id="getListWithPaging" resultType="org.zerock.domain.BoardVO"> 
+		<![CDATA[
+		select bno, title, content, writer, regdate, updatedate from ( 
+			select /*+INDEX_DESC(tbl_board pk_board) */ rownum rn, bno, title, content, 
+				writer, regdate, updatedate 
+			from tbl_board 
+			where rownum <= #{pageNum} * #{amount} 
+		) where rn > (#{pageNum} -1) * #{amount} 
+		]]>
+	</select> -->
+	
+	<!-- 검색할시와 검색후에 페이징 처리할시 필요 -->
 	<select id="getListWithPaging" resultType="org.zerock.domain.BoardVO"> 
-		<![CDATA[ select bno, title, content, writer, regdate, updatedate from ( 
-		select /*+INDEX_DESC(tbl_board pk_board) */ rownum rn, bno, title, content, 
-		writer, regdate, updatedate from tbl_board where rownum <= #{pageNum} * #{amount} 
-		) where rn > (#{pageNum} -1) * #{amount} ]]> </select>
+		<![CDATA[
+		select bno, title, content, writer, regdate, updatedate from ( 
+			select /*+INDEX_DESC(tbl_board pk_board) */ rownum rn, bno, title, content, 
+				writer, regdate, updatedate 
+			from tbl_board 
+			where  
+		]]>
+		<include refid="criteria"></include> <!-- 위를 사용하므로서 코드의 재활용이랑 모듈화 가능 -->
+		
+		<![CDATA[
+				rownum <= #{pageNum} * #{amount} 
+			) where rn > (#{pageNum} -1) * #{amount}		
+		]]>
+		
+	</select>
 
-
-	<select id="getListWithPaging"
-		resultType="org.zerock.domain.BoardVO">
-  <![CDATA[
-  select 
-    bno, title, content, writer, regdate, updatedate
-  from 
-      (
-      select /*+INDEX_DESC(tbl_board pk_board) */
-        rownum rn, bno, title, content, writer, regdate, updatedate 
-      from 
-        tbl_board
-      where 
-  ]]>
+	<!-- 	
+	<select id="getListWithPaging" resultType="org.zerock.domain.BoardVO">
+  		<![CDATA[
+  		select 
+    		bno, title, content, writer, regdate, updatedate
+  		from 
+      			(
+      			select /*+INDEX_DESC(tbl_board pk_board) */
+        			rownum rn, bno, title, content, writer, regdate, updatedate 
+      			from 
+        			tbl_board
+      			where 
+  		]]>
 		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
 			<foreach item='type' collection="typeArr">
 				<trim prefix="OR">
@@ -108,23 +132,22 @@
 			</foreach>
 		</trim>
       
-  <![CDATA[    
-      rownum <= #{pageNum} * #{amount}
-      )
-  where rn > (#{pageNum} -1) * #{amount}   
-  ]]>
-	</select>
-
-
+  	<![CDATA[    
+      		rownum <= #{pageNum} * #{amount}
+      		)
+  	where rn > (#{pageNum} -1) * #{amount}   
+  	]]>
+  	</select>
+	 -->
 
 
 	<select id="getTotalCount" resultType="int">
 		select count(*) from tbl_board where 
 		
-		<include refid="criteria"></include> 
+		<include refid="criteria"></include>  <!-- 검색후에도 나온 글 갯수를 가지고 RealEnd로 페이지 갯수 표시  -->
 		
 		bno > 0
 		
-	</select>  -->
+	</select>  
 
 </mapper>

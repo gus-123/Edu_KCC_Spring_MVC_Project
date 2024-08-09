@@ -17,6 +17,7 @@ import lombok.extern.log4j.Log4j;
 //JUnit 테스트를 실행할 때 스프링 컨테이너를 사용하여 테스트를 진행할 수 있음
 @RunWith(SpringJUnit4ClassRunner.class)
 //해당 테스트에서 사용될 애플리케이션 컨텍스트가 WebApplicationContext가 되도록 설정
+// Servlet의 ServletContext를 이용하기 위해서인데, 스프링에서는 WebApplicationContext라는 존재를 이용하기 위해서 이다.
 @WebAppConfiguration
 //Spring Container의 context를 가져오기 위한 용도(즉,  테스트를 실행하기 위한 환경을 설정)
 @ContextConfiguration({"file:src/main/webapp/WEB-INF/spring/root-context.xml", 
@@ -26,7 +27,7 @@ public class BoardControllerTests {
 	
 	@Autowired
 	private WebApplicationContext ctx;
-	private MockMvc mockMvc;  // 가상의 톰캣의 역할을 해줌. (MockMvc 객체 생성)
+	private MockMvc mockMvc;  // 가상의 톰캣의 역할을 해줌. (MockMvc 객체 생성 - 즉, 가짜 mvc)
 	
 	// 가상의 톰캣을 만들어줬다.
 	// 테스트 메서드가 실행되기 전에 한 번만 실행되는 @Before 어노테이션을 사용하여 mockMvc 객체를 초기화하는 역할을 함.

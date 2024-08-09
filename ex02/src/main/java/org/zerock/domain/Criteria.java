@@ -8,10 +8,11 @@ import lombok.ToString;
 @ToString
 @Setter
 @Getter
+// 페이징 처리 용도(개별 객체를 만들거나 해시 맵으로 데이터를 전달)
 public class Criteria {
 
-  private int pageNum;
-  private int amount;
+  private int pageNum;  // 페이지 번호
+  private int amount;  //글을 몇개를 보여 줄것인가
   
   private String type;
   private String keyword;

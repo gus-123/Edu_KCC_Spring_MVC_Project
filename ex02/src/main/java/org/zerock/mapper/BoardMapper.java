@@ -9,7 +9,7 @@ public interface BoardMapper {
 
 	public List<BoardVO> getList();
 
-	public List<BoardVO> getListWithPaging(Criteria cri);
+	public List<BoardVO> getListWithPaging(Criteria cri);  // Criteria객체를 이용해 페이징처리된 결과를 가져옴.
 
 	public void insert(BoardVO board);
 
