@@ -231,6 +231,10 @@
 										function(e) {
 
 											e.preventDefault();
+											//bno 쌓이는 문제 해결 용도
+											actionForm
+												.find('[name=bno]').remove();
+											
 											actionForm
 													.append("<input type='hidden' name='bno' value='"
 															+ $(this).attr(
