@@ -23,6 +23,9 @@
 	
 	<context:component-scan base-package="org.zerock.controller" />
 	
-	
+	<!-- 파일 업로드를 위해 필요 -->
+	<beans:bean id="multipartResolver"
+		class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+	</beans:bean>
 	
 </beans:beans>

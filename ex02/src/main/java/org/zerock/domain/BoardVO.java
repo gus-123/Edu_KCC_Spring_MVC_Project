@@ -14,4 +14,6 @@ public class BoardVO {
   private String writer;
   private Date regdate;
   private Date updateDate;
+  
+  private int replyCnt;  // 댓글의 숫자를 의미하는 인스턴스 변수
 }

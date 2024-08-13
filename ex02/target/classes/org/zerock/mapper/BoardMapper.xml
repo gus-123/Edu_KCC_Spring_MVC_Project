@@ -70,6 +70,11 @@
 		where bno =
 		#{bno}
 	</update>
+	
+	<!-- 댓글 추가시 사용(반정규화된 tbl_board 테이블에 replycnt 칼럼이 업데이트되어야 하기 때문에 추가 함.) -->
+	<update id="updateReplyCnt">
+		update tbl_board set replyCnt = replycnt + #{amount} where bno = #{bno}
+	</update>
 
 <!-- list만의 페이징 처리 용도 -->
 <!-- 	<select id="getListWithPaging" resultType="org.zerock.domain.BoardVO"> 
@@ -83,12 +88,12 @@
 		]]>
 	</select> -->
 	
-	<!-- 검색할시와 검색후에 페이징 처리할시 필요 -->
+	<!-- 검색할시와 검색후에 페이징 처리할시 필요(tbl_board에서 replycnt의 값을 가져오도록 추가 해줌.) --> 
 	<select id="getListWithPaging" resultType="org.zerock.domain.BoardVO"> 
 		<![CDATA[
-		select bno, title, content, writer, regdate, updatedate from ( 
+		select bno, title, content, writer, regdate, updatedate, replycnt from ( 
 			select /*+INDEX_DESC(tbl_board pk_board) */ rownum rn, bno, title, content, 
-				writer, regdate, updatedate 
+				writer, regdate, updatedate, replycnt 
 			from tbl_board 
 			where  
 		]]>

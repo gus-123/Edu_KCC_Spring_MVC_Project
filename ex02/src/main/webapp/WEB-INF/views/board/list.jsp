@@ -42,6 +42,8 @@
 
 							<td><a class='move' href='<c:out value="${board.bno}"/>'>
 									<c:out value="${board.title}" />
+									<!-- 댓글의 숫자를 반영 하는 용도 -->
+									<b>[ <c:out value="${board.replyCnt }" /> ]</b> 
 							</a></td>
 
 							<td><c:out value="${board.writer}" /></td>
