@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.mapper.MemberMapper">
+<!-- mybatis의 표본 아주 중요! -->
+
+
+  <resultMap type="org.zerock.domain.MemberVO" id="memberMap">
+    <id property="userid" column="userid"/>
+    <result property="userid" column="userid"/>
+    <result property="userpw" column="userpw"/>
+    <result property="userName" column="username"/>
+    <result property="regDate" column="regdate"/>
+    <result property="updateDate" column="updatedate"/>
+    <collection property="authList" resultMap="authMap"> <!-- 1대 다 관계(즉, 여러개를 위해 리스트를 사용할때 collection 사용) -->
+    </collection> 
+  </resultMap>
+  
+  <resultMap type="org.zerock.domain.AuthVO" id="authMap">
+    <result property="userid" column="userid"/> <!-- 1대 다 관계 표현을 위해 꼭 필요! -->
+    <result property="auth" column="auth"/>
+  </resultMap>
+  
+  <!-- AuthVO객체를 맵핑하기 위해 memberMap 필요. (auth 리스트관계를 사용하고 싶을때) -->
+  <select id="read" resultMap="memberMap">
+	SELECT 
+  		mem.userid,  userpw, username, enabled, regdate, updatedate, auth
+	FROM 
+  		tbl_member mem LEFT OUTER JOIN tbl_member_auth auth on mem.userid = auth.userid 
+	WHERE mem.userid = #{userid} 
+  </select>
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Spring Boot 에서는 이 부분이 security config.java로 사용 됨. -->
+	
+	<!-- security BEAN 등록 -->
+	<bean id="customAccessDenied" class="org.zerock.security.CustomAccessDeniedHandler"></bean>
+	<bean id="customLoginSuccess" class="org.zerock.security.CustomLoginSuccessHandler"></bean>
+	<bean id="customUserDetailService" class="org.zerock.security.CustomUserDetailsService"></bean>
+	
+	<!-- 암호 인코딩 안됨 -->
+	<!-- <bean id="customPasswordEncoder" class="org.zerock.security.CustomNoOpPasswordEncoder"></bean> -->
+	<!-- 암호 인코딩 됨. (스프링 시큐리티에서 제공되는 BcryptPasswordEncoder 클래스를 이용해서 패스워드를 암호화해서 처리 함.) -->
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean>
+	
+	
+	<!-- 스프링 시큐리티가  동작하기 위해서는 Authentication-manager라는 존재와 스프링 시큐리티의 시작 지점이 필요하기 때문에 -->
+	<!-- 위와 같이 최소한의 설정을 지정한 후에 실행 해야 함. -->
+	<security:http>
+		
+		<!-- 내가 설정한 권한이 없으면 자동으로 'http://localhost:8088/login' 로그인 페이지로 강제로 이동 -->
+		<!-- 접근 제한 설정(모두 가능) -->
+		<security:intercept-url pattern="/sample2/all" access="permitAll"/>
+		
+		<!-- 접근 제한 설정(member) -->
+		<security:intercept-url pattern="/sample2/member" access="hasRole('ROLE_MEMBER')"/>
+		
+		<!-- 접근 제한 설정(admin) -->
+		<security:intercept-url pattern="/sample2/admin" access="hasRole('ROLE_ADMIN')"/>
+		
+		<!-- spring-security 기본 로그인 페이지 -->
+		<!-- <security:form-login/> -->
+		
+		<!-- 커스텀 로그인 페이지 이용시 'customLoginSuccess'로 권한을 체크후 바로 이동시켜줌. -->
+		<!-- action="/login", name='username', name='password' 기본 형식을 따라야 함. -->
+		<security:form-login login-page="/customLogin"
+							authentication-success-handler-ref="customLoginSuccess"/>
+		
+		<!-- error나면 나 여길로 갈래 -> CommonController로 감.(jsp로 가는게 아니라) -->
+		<!-- <security:access-denied-handler error-page="/accessError"/> -->
+		<security:access-denied-handler ref="customAccessDenied"/>
+		
+		<!-- post 방식으로 로그아웃 (로그인과 마찬가지로 특정한 URI를 지정하고, 로그아웃 처리 후 직접 로직을 처리할 수 있는 핸들러를 등록 -->
+		<security:logout logout-url="/customLogout" invalidate-session="true"/>
+	
+	
+	</security:http>
+	
+	<!-- 인증 총괄자 -->
+	<security:authentication-manager>
+		<security:authentication-provider  user-service-ref="customUserDetailService"> <!-- 3. Spring Security에서 사용자 인증을 위해 데이터베이스를 사용하기 위한 등록 -->
+			<security:password-encoder ref="bcryptPasswordEncoder"/>
+			
+			<!-- Spring Security에서 사용자 인증을 위해 데이터베이스를 사용하겠다는 설정 -->
+			
+			
+			<!-- // 2.
+			스프링 시큐리티의 지정된 테이블을 생성하여 데이터베이스를 이용하는 방식일때 사용 (기본)
+			<security:jdbc-user-service data-source-ref="dataSource"/>
+			
+			기존에 작성된 데이터베이스를 이용하는 방식일때 사용 (커스텀) - 1. 인증을 위해 필요한 쿼리 2. 권한을 확인하는데 필요한 쿼리
+			<security:jdbc-user-service data-source-ref="dataSource"
+				users-by-username-query="select userid, userpw, enabled from tbl_member where userid = ?"
+				authorities-by-username-query="select userid, auth from tbl_member_auth where userid = ?"/>
+			
+			사용자의 비밀번호는 bcrypt 알고리즘으로 암호화/복호화
+			<security:password-encoder ref="bcryptPasswordEncoder"/>
+			 -->
+		 	
+		 	
+			<!-- <security:user-service> //1.
+				로그인 하면 내게 ROLE_MEMBER 권한을 줌.
+				(임시방편) 패스워드의 인코딩 처리 없이 사용하고 싶다면 패스워드 앞에 '{noop}' 문자열을 추가해야 함.
+				<security:user name="member" password="{noop}member" authorities="ROLE_MEMBER"/>
+				<security:user name="admin" password="{noop}admin" authorities="ROLE_MEMBER, ROLE_ADMIN"/>
+			</security:user-service> -->
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>
